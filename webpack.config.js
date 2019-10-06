@@ -2,9 +2,9 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+// const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 
 module.exports = env => {
@@ -27,8 +27,11 @@ module.exports = env => {
           NODE_ENV: '"production"'
         }
       }),
-      new ExtractTextPlugin("style.css", {
-        ignoreOrder: true
+      // new ExtractTextPlugin("style.css", {
+      //   ignoreOrder: true
+      // }),
+      new MiniCssExtractPlugin({
+        filename: "style.css"
       })
     )
   }
@@ -57,7 +60,7 @@ module.exports = env => {
         oneOf: [{
           resourceQuery: /module/,
           use: [
-            'vue-style-loader',
+            env.production ? MiniCssExtractPlugin.loader : 'vue-style-loader',
             {
               loader: 'css-loader',
               options: {
@@ -75,7 +78,7 @@ module.exports = env => {
           ]
         }, {
           use: [
-            'vue-style-loader',
+            env.production ? MiniCssExtractPlugin.loader : 'vue-style-loader',
             'css-loader', {
               loader: 'px2rem-loader',
               options: {
@@ -88,7 +91,7 @@ module.exports = env => {
         }],
       }, {
         test: /\.css$/,
-        use: ['vue-style-loader', 'css-loader']
+        use: [env.production ? MiniCssExtractPlugin.loader : 'vue-style-loader', 'css-loader']
       }]
     },
     resolve: {
